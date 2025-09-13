@@ -13,6 +13,7 @@ Puis dans un dossier dans un terminal :
 - cd animax *(tout le projet/code est dans ce dossier)*
 - npm install
 - npm run dev
+
 Allez sur le navigateur et tapez http://localhost:3000/
 
 ## Commandes utiles
