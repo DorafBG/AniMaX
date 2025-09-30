@@ -18,9 +18,9 @@ Puis dans un dossier dans un terminal :
 
 1. Créer un fichier `.env` à la racine du dossier `animax` avec :
    ```
-   DATABASE_URL="postgresql://username:password@localhost:5432/animax_db"
+   DATABASE_URL="postgresql://username:password@localhost:5999/animaxdb"
+   NEXT_PUBLIC_BASE_URL="http://localhost:3000"
    ```
-   (Remplacer `username`, `password` et `animax_db` par vos propres valeurs)
 
 2. Initialiser Prisma :
    ```bash
@@ -30,7 +30,11 @@ Puis dans un dossier dans un terminal :
 
 3. (Optionnel) Restaurer les données depuis le backup :
    ```bash
-   psql -U username -d animax_db < backup.sql
+   docker exec -it my-postgres psql -U root -d animaxdb -f /backup.sql
+
+   OU
+
+   docker exec -it my-postgres psql -U root -d animaxdb < backup.sql
    ```
 
 4. Lancer le serveur de développement :
