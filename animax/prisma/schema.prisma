@@ -12,7 +12,6 @@ model anime {
   contenu         String            @db.VarChar(50)
   synopsis        String
   genre           String            @db.VarChar(50)
-  auteur          String            @db.VarChar(50)
   notemoyenne     Decimal?          @db.Decimal(15, 2)
   dateparution    DateTime?         @db.Date
   idfile          Int?              @unique
