@@ -10,7 +10,7 @@ export default function NavBar() {
       </h1>
 
       <nav className="flex gap-6 text-lg">
-        <a href="#" className="hover:text-cyan-300">Animes</a>
+        <a href="/" className="hover:text-cyan-300">Animes</a>
         <a href="#" className="hover:text-cyan-300">Actus</a>
       </nav>
 
