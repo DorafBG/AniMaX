@@ -2,6 +2,7 @@
 import { useState, useMemo } from "react";
 import SearchBar from "./SearchBar";
 import AnimeCard from "./AnimeCard";
+import FilterDropdown, { FilterCriteria } from "./FilterDropdown";
 
 type Anime = {
   idanime: number;
@@ -20,41 +21,79 @@ type AnimesListProps = {
 
 export default function AnimesList({ animes }: AnimesListProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<FilterCriteria>({
+    genres: []
+  });
+
   const handleSearch = (term: string) => {
     setSearchTerm(term);
   };
 
-  // Si "animes" ou "searchTerm" change, on recalcule "filteredAnimes"
+  const handleToggleFilters = () => {
+    setShowFilters(!showFilters);
+  };
+
+  const handleApplyFilters = (filters: FilterCriteria) => {
+    setActiveFilters(filters);
+  };
+
+  // on recupere la liste des genres
+  const availableGenres = useMemo(() => {
+    const genres = animes.map(anime => anime.genre).filter(Boolean);
+    return [...new Set(genres)] as string[];
+  }, [animes]);
+
+  // Si "animes", "searchTerm" ou "activeFilters" change, on recalcule "filteredAnimes"
   // (useMemo evite des recalculs inutiles)
   const filteredAnimes = useMemo(() => {
-    if (!searchTerm.trim()) { // si le terme de recherche est vide, retourner la liste entiere
-      return animes;
+    let filtered = animes;
+
+    // Filtrage par terme de recherche
+    if (searchTerm.trim()) {
+      filtered = filtered.filter((anime) =>
+        anime.contenu.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (anime.genre && anime.genre.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (anime.synopsis && anime.synopsis.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
     }
 
-    // filtre en fonction du terme de recherche dans le titre, le genre ou le synopsis
-    return animes.filter((anime) =>
-      anime.contenu.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (anime.genre && anime.genre.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (anime.synopsis && anime.synopsis.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
-  }, [animes, searchTerm]);
+    // Filtrage par genres
+    if (activeFilters.genres.length > 0) {
+      filtered = filtered.filter(anime => 
+        anime.genre && activeFilters.genres.includes(anime.genre)
+      );
+    }
+
+    return filtered;
+  }, [animes, searchTerm, activeFilters]); // si l'un de ces 3 change, on recalcule
 
   return (
-    <>
-      <SearchBar onSearch={handleSearch} />
+    <div className="relative">
+      <SearchBar onSearch={handleSearch} onToggleFilters={handleToggleFilters} />
       
-      {searchTerm && (
+      <FilterDropdown
+        isOpen={showFilters}
+        onClose={() => setShowFilters(false)}
+        onApplyFilters={handleApplyFilters}
+        availableGenres={availableGenres}
+      />
+      
+      {(searchTerm || activeFilters.genres.length > 0) && (
         <div className="text-center text-white/70 mb-4">
-          {filteredAnimes.length} résultat(s) pour "{searchTerm}"
+          {filteredAnimes.length} résultat(s) trouvé(s)
+          {searchTerm && ` pour "${searchTerm}"`}
         </div>
       )}
 
       {filteredAnimes.length === 0 ? (
         <div className="text-center text-white/70 mt-8">
-          {searchTerm ? "Aucun anime trouvé pour cette recherche." : "Aucun anime disponible."}
+          {searchTerm || activeFilters.genres.length > 0
+            ? "Aucun anime trouvé avec ces critères." 
+            : "Aucun anime disponible."}
         </div>
       ) : (
-        <section className="flex flex-wrap justify-center gap-21 px-6 py-4 max-w-screen-xl mx-auto">
+        <section className="flex flex-wrap justify-center gap-6 px-6 py-4 max-w-screen-xl mx-auto">
           {filteredAnimes.map((anime) => (
             <AnimeCard
               key={anime.idanime}
@@ -66,6 +105,6 @@ export default function AnimesList({ animes }: AnimesListProps) {
           ))}
         </section>
       )}
-    </>
+    </div>
   );
 }

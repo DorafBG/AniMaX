@@ -1,12 +1,13 @@
 "use client"
-import { Search } from "lucide-react"
+import { Search, ListFilter } from "lucide-react"
 import { useState } from "react"
 
 type SearchBarProps = {
   onSearch: (searchTerm: string) => void;
+  onToggleFilters: () => void;
 }
 
-export default function SearchBar({ onSearch }: SearchBarProps) {
+export default function SearchBar({ onSearch, onToggleFilters }: SearchBarProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,6 +26,13 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
         onChange={handleInputChange}
         className="bg-transparent outline-none text-white w-full placeholder-gray-300"
       />
+      <button 
+        onClick={onToggleFilters}
+        className="ml-2 p-1 hover:bg-purple-500 rounded-md transition-colors"
+        title="Filtres avancés"
+      >
+        <ListFilter className="text-gray-300 hover:text-white" size={20} />
+      </button>
     </div>
   )
 }
