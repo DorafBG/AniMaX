@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import NavBar from "@/app/components/NavBar";
+import Footer from "@/app/components/Footer";
 import RatingChart from "@/app/components/RatingChart";
 import Link from "next/link";
 import Image from "next/image";
@@ -27,7 +28,7 @@ export default async function AnimePage({ params }: { params: { id: string } }) 
   const date = anime.dateparution ? new Date(anime.dateparution).getFullYear() : "N/A";
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-purple-900 to-purple-800 text-white">
+    <div className="min-h-screen bg-gradient-to-b from-purple-900 to-purple-1000 text-white flex flex-col">
       <NavBar />
 
       <div className="px-6 py-4">
@@ -108,6 +109,7 @@ export default async function AnimePage({ params }: { params: { id: string } }) 
           </div>
         </div>
       </div>
-    </main>
+      <Footer />
+    </div>
   );
 }
