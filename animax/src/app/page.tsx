@@ -11,7 +11,7 @@ export default async function Home() {
   const animes = await getAnimes();
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-purple-900 to-purple-800">
+    <main className="min-h-screen bg-gradient-to-b from-purple-900 to-purple-1000">
       <NavBar />
       {(!Array.isArray(animes)) ? (
         <div className="text-center text-white mt-8">
