@@ -11,7 +11,7 @@ export default function NavBar() {
 
       <nav className="flex gap-6 text-lg font-semibold font-inter">
         <a href="/" className="hover:text-cyan-300">Animes</a>
-        <a href="#" className="hover:text-cyan-300">Actus</a>
+        <a href="/actus" className="hover:text-cyan-300">Actus</a>
       </nav>
 
       <div className="flex gap-4 font-medium">

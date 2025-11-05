@@ -35,7 +35,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-cyan-300 transition-colors inline-block">
+                <a href="/actus" className="text-gray-300 hover:text-cyan-300 transition-colors inline-block">
                   Actus
                 </a>
               </li>
