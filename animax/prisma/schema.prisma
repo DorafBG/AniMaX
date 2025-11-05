@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model anime {
+  idanime         Int               @id
+  contenu         String            @db.VarChar(50)
+  synopsis        String
+  genre           String            @db.VarChar(50)
+  notemoyenne     Decimal?          @db.Decimal(15, 2)
+  dateparution    DateTime?         @db.Date
+  idfile          Int?              @unique
+  file            file?             @relation(fields: [idfile], references: [idfile], onDelete: NoAction, onUpdate: NoAction)
+  commentaire     commentaire[]
+  est_ecrit_par   est_ecrit_par[]
+  est_produit_par est_produit_par[]
+  mentionne       mentionne[]
+  note            note[]
+}
+
+model auteur {
+  idauteur      Int             @id
+  nomauteur     String?         @db.VarChar(50)
+  est_ecrit_par est_ecrit_par[]
+}
+
+model commentaire {
+  idcommentaire   Int         @id
+  nblike          Int?
+  datecommentaire DateTime?   @db.Date
+  idanime         Int
+  idpost          Int
+  iduser          Int
+  anime           anime       @relation(fields: [idanime], references: [idanime], onDelete: NoAction, onUpdate: NoAction)
+  post            post        @relation(fields: [idpost], references: [idpost], onDelete: NoAction, onUpdate: NoAction)
+  utilisateur     utilisateur @relation(fields: [iduser], references: [iduser], onDelete: NoAction, onUpdate: NoAction)
+  like_           like_[]
+}
+
+model est_ecrit_par {
+  idanime  Int
+  idauteur Int
+  anime    anime  @relation(fields: [idanime], references: [idanime], onDelete: NoAction, onUpdate: NoAction)
+  auteur   auteur @relation(fields: [idauteur], references: [idauteur], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([idanime, idauteur])
+}
+
+model est_produit_par {
+  idanime  Int
+  idstudio Int
+  anime    anime  @relation(fields: [idanime], references: [idanime], onDelete: NoAction, onUpdate: NoAction)
+  studio   studio @relation(fields: [idstudio], references: [idstudio], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([idanime, idstudio])
+}
+
+model file {
+  idfile      Int          @id
+  url         String?
+  anime       anime?
+  utilisateur utilisateur?
+}
+
+model like_ {
+  iduser        Int
+  idcommentaire Int
+  hasliked      Boolean?
+  datelike      DateTime    @db.Date
+  commentaire   commentaire @relation(fields: [idcommentaire], references: [idcommentaire], onDelete: NoAction, onUpdate: NoAction)
+  utilisateur   utilisateur @relation(fields: [iduser], references: [iduser], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([iduser, idcommentaire])
+}
+
+model mentionne {
+  idanime Int
+  idpost  Int
+  anime   anime @relation(fields: [idanime], references: [idanime], onDelete: NoAction, onUpdate: NoAction)
+  post    post  @relation(fields: [idpost], references: [idpost], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([idanime, idpost])
+}
+
+model note {
+  iduser      Int
+  idanime     Int
+  note        Decimal?    @db.Decimal(15, 2)
+  datenote    DateTime    @db.Date
+  anime       anime       @relation(fields: [idanime], references: [idanime], onDelete: NoAction, onUpdate: NoAction)
+  utilisateur utilisateur @relation(fields: [iduser], references: [iduser], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([iduser, idanime])
+}
+
+model post {
+  idpost      Int           @id
+  titrepost   String
+  contenu     String        @db.VarChar(50)
+  datepost    DateTime?     @db.Date
+  iduser      Int
+  commentaire commentaire[]
+  mentionne   mentionne[]
+  utilisateur utilisateur   @relation(fields: [iduser], references: [iduser], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model studio {
+  idstudio        Int               @id
+  nomstudio       String?           @db.VarChar(50)
+  est_produit_par est_produit_par[]
+}
+
+model utilisateur {
+  iduser             Int           @id
+  nomutilisateur     String?       @unique @db.VarChar(20)
+  mdp                String?       @db.VarChar(50)
+  adressemail        String?       @db.VarChar(50)
+  isadministrateur   Boolean?
+  datecreationcompte DateTime      @db.Date
+  idfile             Int?          @unique
+  commentaire        commentaire[]
+  like_              like_[]
+  note               note[]
+  post               post[]
+  file               file?         @relation(fields: [idfile], references: [idfile], onDelete: NoAction, onUpdate: NoAction)
+}

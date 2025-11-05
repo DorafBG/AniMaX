@@ -30,3 +30,4 @@ animax/.vercel
 
 animax/*.tsbuildinfo
 animax/next-env.d.ts
+/generated/prisma
