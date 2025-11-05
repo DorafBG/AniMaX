@@ -30,15 +30,16 @@ model auteur {
 }
 
 model commentaire {
-  idcommentaire   Int         @id
+  idcommentaire   Int          @id
+  contenu         String?      @db.Text
   nblike          Int?
-  datecommentaire DateTime?   @db.Date
+  datecommentaire DateTime?    @db.Timestamp
   idanime         Int
-  idpost          Int
+  idpost          Int?
   iduser          Int
-  anime           anime       @relation(fields: [idanime], references: [idanime], onDelete: NoAction, onUpdate: NoAction)
-  post            post        @relation(fields: [idpost], references: [idpost], onDelete: NoAction, onUpdate: NoAction)
-  utilisateur     utilisateur @relation(fields: [iduser], references: [iduser], onDelete: NoAction, onUpdate: NoAction)
+  anime           anime        @relation(fields: [idanime], references: [idanime], onDelete: NoAction, onUpdate: NoAction)
+  post            post?        @relation(fields: [idpost], references: [idpost], onDelete: NoAction, onUpdate: NoAction)
+  utilisateur     utilisateur  @relation(fields: [iduser], references: [iduser], onDelete: NoAction, onUpdate: NoAction)
   like_           like_[]
 }
 
@@ -118,7 +119,7 @@ model studio {
 model utilisateur {
   iduser             Int           @id
   nomutilisateur     String?       @unique @db.VarChar(20)
-  mdp                String?       @db.VarChar(50)
+  mdp                String?       @db.VarChar(255)
   adressemail        String?       @db.VarChar(50)
   isadministrateur   Boolean?
   datecreationcompte DateTime      @db.Date

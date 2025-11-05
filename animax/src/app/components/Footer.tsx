@@ -80,7 +80,7 @@ export default function Footer() {
             © {currentYear} AniMaX. Tous droits réservés.
           </p>
           <p className="flex items-center gap-2">
-            Fait avec par Quentin, Germain et Khanh-Lam
+            Fait par Quentin, Germain et Khanh-Lam
           </p>
         </div>
       </div>

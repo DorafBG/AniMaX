@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import NavBar from "@/app/components/NavBar";
 import Footer from "@/app/components/Footer";
 import RatingChart from "@/app/components/RatingChart";
+import UserRatingSection from "@/app/components/UserRatingSection";
+import CommentsSection from "@/app/components/CommentsSection";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -62,17 +64,11 @@ export default async function AnimePage({ params }: { params: { id: string } }) 
             <p className="text-gray-200 mb-6">{anime.synopsis}</p>
 
             {/* Ligne des notes */}
-            <div className="flex justify-between items-center mb-6">
-              <div className="flex-1">
-                <p className="text-sm text-gray-400">Ta note :</p>
-                <p className="text-lg font-semibold">-</p>
-              </div>
-
-              <div className="flex-1 text-right">
-                <p className="text-sm text-gray-400">Note moyenne :</p>
-                <p className="text-lg font-semibold">{anime.notemoyenne ?? "N/A"}/10</p>
-              </div>
-            </div>
+            <UserRatingSection 
+              animeId={anime.idanime}
+              noteMoyenne={anime.notemoyenne}
+              notes={notes}
+            />
 
             {/* Petit graphique */}
             <RatingChart data={distribution} />
@@ -81,29 +77,7 @@ export default async function AnimePage({ params }: { params: { id: string } }) 
             <div className="bg-purple-950 p-4 rounded-md shadow-md">
               <h3 className="text-lg font-semibold mb-3">Commentaires</h3>
               <div className="space-y-3">
-                {anime.commentaire.length === 0 ? (
-                  <p className="text-gray-400">Aucun commentaire.</p>
-                ) : (
-                  anime.commentaire.map((c: any) => (
-                    <div
-                      key={c.idcommentaire}
-                      className="bg-purple-800/40 rounded-md p-3"
-                    >
-                      <p className="text-sm">
-                        <span className="font-semibold">{c.utilisateur.nomutilisateur}</span>:{" "}
-                        {c.contenu}
-                      </p>
-                      <div className="flex justify-between text-xs text-gray-400 mt-1">
-                        <span>{c.nblike ?? 0} {c.nblike > 0 ? "❤️" : "🤍"}</span>
-                        {c.note ? (
-                          <span className="text-base md:text-lg font-bold">
-                            ★ {c.note}/10
-                          </span>
-                        ) : null}
-                      </div>
-                    </div>
-                  ))
-                )}
+                <CommentsSection comments={anime.commentaire} idanime={anime.idanime} />
               </div>
             </div>
           </div>

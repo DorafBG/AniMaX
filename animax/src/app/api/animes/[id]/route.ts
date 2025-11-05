@@ -19,6 +19,9 @@ export async function GET(req: Request, context: { params: Promise<{ id: string 
           include: {
             utilisateur: { select: { nomutilisateur: true } },
           },
+          orderBy: {
+            datecommentaire: 'desc'
+          }
         },
         note: true,
       },
