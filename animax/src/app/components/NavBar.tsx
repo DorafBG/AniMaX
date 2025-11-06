@@ -93,7 +93,7 @@ export default function NavBar() {
                   <button
                     onClick={() => {
                       setShowMenu(false);
-                      // TODO: Naviguer vers le profil
+                      router.push("/profil");
                     }}
                     className="w-full text-left px-4 py-2 hover:bg-purple-700 text-white flex items-center gap-2"
                   >
@@ -125,3 +125,4 @@ export default function NavBar() {
     </header>
   );
 }
+
