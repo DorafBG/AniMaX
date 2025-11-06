@@ -3,6 +3,8 @@ import { PrismaClient } from "@prisma/client";
 import NavBar from "@/app/components/NavBar";
 import Footer from "@/app/components/Footer";
 import Image from "next/image";
+import ProfilePicUpload from "./ProfilePicUpload";
+import ProfilClientSection from "./ProfilClientSection";
 
 const prisma = new PrismaClient();
 
@@ -45,24 +47,22 @@ export default async function ProfilPage() {
     );
   }
 
+  // Transforme les Decimal en string pour les props client
+  function serializeUser(user: any) {
+    return {
+      ...user,
+      note: user.note.map((n: any) => ({
+        ...n,
+        note: n.note?.toString() ?? null,
+      })),
+    };
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-900 to-purple-1000 text-white flex flex-col">
       <NavBar />
       <div className="max-w-2xl mx-auto p-8">
-        <div className="flex items-center gap-6 mb-8">
-          <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-cyan-400">
-            {user.file?.url ? (
-              <Image src={`/${user.file.url}`} alt="Photo de profil" fill className="object-cover" />
-            ) : (
-              <div className="w-full h-full bg-gray-700 flex items-center justify-center text-3xl">?</div>
-            )}
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold">{user.nomutilisateur}</h1>
-            <p className="text-gray-300">{user.adressemail}</p>
-            <p className="mt-2 text-cyan-300">{user.note.length} animes notés</p>
-          </div>
-        </div>
+        <ProfilClientSection user={serializeUser(user)} />
         <div>
           <h2 className="text-xl font-semibold mb-4">Mes notes</h2>
           {user.note.length === 0 ? (
