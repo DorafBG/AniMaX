@@ -30,7 +30,21 @@ export default async function ProfilPage() {
       note: {
         include: {
           anime: {
-            select: { contenu: true, file: true }
+            select: { 
+              idanime: true,
+              contenu: true, 
+              file: true 
+            }
+          }
+        }
+      },
+      commentaire: {
+        include: {
+          anime: {
+            select: {
+              idanime: true,
+              contenu: true
+            }
           }
         }
       }
@@ -55,8 +69,18 @@ export default async function ProfilPage() {
         ...n,
         note: n.note?.toString() ?? null,
       })),
+      commentaire: user.commentaire
     };
   }
+
+  // Créer un mapping des commentaires par anime
+  const commentairesByAnime = new Map();
+  user.commentaire.forEach((comment: any) => {
+    if (!commentairesByAnime.has(comment.idanime)) {
+      commentairesByAnime.set(comment.idanime, []);
+    }
+    commentairesByAnime.get(comment.idanime).push(comment);
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-900 to-purple-1000 text-white flex flex-col">
@@ -64,33 +88,59 @@ export default async function ProfilPage() {
       <div className="max-w-2xl mx-auto p-8">
         <ProfilClientSection user={serializeUser(user)} />
         <div>
-          <h2 className="text-xl font-semibold mb-4">Mes notes</h2>
+          <h2 className="text-xl font-semibold mb-4">Mes notes et commentaires</h2>
           {user.note.length === 0 ? (
             <p className="text-gray-400">Aucune note pour l'instant.</p>
           ) : (
             <ul className="space-y-4">
-              {user.note.map((n: any, idx: number) => (
-                <li
-                  key={`${n.idnote}-${n.anime?.contenu ?? idx}`}
-                  className="flex items-center gap-4 bg-purple-950 p-4 rounded-md"
-                >
-                  {n.anime?.file?.url && (
-                    <Image
-                      src={n.anime.file.url.startsWith("/") ? n.anime.file.url : `/${n.anime.file.url}`}
-                      alt={n.anime.contenu}
-                      width={48}
-                      height={64}
-                      className="rounded"
-                    />
-                  )}
-                  <div>
-                    <div className="font-semibold">{n.anime?.contenu}</div>
-                    <div className="text-cyan-300 font-bold">
-                      ★ {n.note?.toString()}/10
+              {user.note.map((n: any, idx: number) => {
+                const animeComments = commentairesByAnime.get(n.idanime) || [];
+                return (
+                  <li
+                    key={`${n.idnote}-${n.anime?.contenu ?? idx}`}
+                    className="bg-purple-950 p-4 rounded-md"
+                  >
+                    <div className="flex items-center gap-4 mb-2">
+                      {n.anime?.file?.url && (
+                        <Image
+                          src={n.anime.file.url.startsWith("/") ? n.anime.file.url : `/${n.anime.file.url}`}
+                          alt={n.anime.contenu}
+                          width={48}
+                          height={64}
+                          className="rounded"
+                        />
+                      )}
+                      <div>
+                        <div className="font-semibold">{n.anime?.contenu}</div>
+                        <div className="text-cyan-300 font-bold">
+                          ★ {n.note?.toString()}/10
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </li>
-              ))}
+                    {animeComments.length > 0 && (
+                      <div className="mt-3 pl-4 border-l-2 border-cyan-400">
+                        <p className="text-sm text-gray-400 mb-2">
+                          {animeComments.length === 1 ? "Mon commentaire :" : "Mes commentaires :"}
+                        </p>
+                        {animeComments.map((comment: any) => (
+                          <div key={comment.idcommentaire} className="bg-purple-800/40 p-3 rounded-md mb-2">
+                            <p className="text-sm text-gray-200">{comment.contenu}</p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {new Date(comment.datecommentaire).toLocaleDateString('fr-FR', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
