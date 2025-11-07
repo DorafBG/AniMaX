@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Heart, Trash2 } from "lucide-react";
 import AddCommentForm from "./AddCommentForm";
+import Link from "next/link";
 
 type Comment = {
   idcommentaire: number;
@@ -145,48 +146,38 @@ export default function CommentsSection({ comments: initialComments, idanime }: 
       {comments.length === 0 ? (
         <p className="text-gray-400">Aucun commentaire.</p>
       ) : (
-        comments.map((c) => (
-          <div
-            key={c.idcommentaire}
-            className="bg-purple-800/40 rounded-md p-3"
-          >
-          <div className="flex justify-between items-start">
-            <p className="text-sm flex-1">
-              <span className="font-semibold">{c.utilisateur.nomutilisateur}</span>:{" "}
-              {c.contenu || "Pas de contenu"}
-            </p>
-            {user?.isadministrateur && (
-              <button
-                onClick={() => handleDelete(c.idcommentaire)}
-                disabled={deletingComments.has(c.idcommentaire)}
-                className="text-red-400 hover:text-red-300 transition-colors ml-2 disabled:opacity-50"
-                title="Supprimer le commentaire"
+        comments.map((c: any) => (
+          <div key={c.idcommentaire} className="bg-purple-800/40 rounded-md p-3">
+            <p className="text-sm">
+              <Link
+                href={`/profil/${c.utilisateur.iduser}`}
+                className="font-semibold text-cyan-300 hover:underline"
               >
-                <Trash2 size={16} />
+                {c.utilisateur.nomutilisateur}
+              </Link>
+              : {c.contenu}
+            </p>
+            <div className="flex justify-between items-center text-xs text-gray-400 mt-2">
+              <button
+                onClick={() => handleLike(c.idcommentaire)}
+                disabled={!user || loadingLikes.has(c.idcommentaire)}
+                className={`flex items-center gap-1 transition-colors ${
+                  user ? "hover:text-red-400 cursor-pointer" : "cursor-default"
+                } ${userLikes.has(c.idcommentaire) ? "text-red-400" : ""}`}
+              >
+                <Heart
+                  size={16}
+                  className={userLikes.has(c.idcommentaire) ? "fill-red-400" : ""}
+                />
+                <span>{c.nblike || 0}</span>
               </button>
-            )}
-          </div>
-          <div className="flex justify-between items-center text-xs text-gray-400 mt-2">
-            <button
-              onClick={() => handleLike(c.idcommentaire)}
-              disabled={!user || loadingLikes.has(c.idcommentaire)}
-              className={`flex items-center gap-1 transition-colors ${
-                user ? "hover:text-red-400 cursor-pointer" : "cursor-default"
-              } ${userLikes.has(c.idcommentaire) ? "text-red-400" : ""}`}
-            >
-              <Heart
-                size={16}
-                className={userLikes.has(c.idcommentaire) ? "fill-red-400" : ""}
-              />
-              <span>{c.nblike || 0}</span>
-            </button>
-            
-            {c.note !== null && c.note !== undefined && (
-              <span className="text-base md:text-lg font-bold text-yellow-400">
-                ★ {c.note}/10
-              </span>
-            )}
-          </div>
+              
+              {c.note !== null && c.note !== undefined && (
+                <span className="text-base md:text-lg font-bold text-yellow-400">
+                  ★ {c.note}/10
+                </span>
+              )}
+            </div>
           </div>
         ))
       )}

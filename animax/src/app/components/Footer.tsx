@@ -39,11 +39,6 @@ export default function Footer() {
                   Actus
                 </a>
               </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-cyan-300 transition-colors inline-block">
-                  Mon profil
-                </a>
-              </li>
             </ul>
           </div>
 
