@@ -18,47 +18,75 @@ export default async function ActusPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-900 to-purple-1000 text-white flex flex-col">
       <NavBar />
-      <main className="max-w-3xl mx-auto px-6 py-8">
-        <h1 className="text-3xl font-bold mb-6">Actus</h1>
 
+      <main className="max-w-5xl mx-auto px-6 py-12">
+        {/* Hero */}
+        <header className="mb-10 text-center">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-3">Actus</h1>
+          <p className="text-gray-300 max-w-2xl mx-auto">
+            Les dernières actualités et articles autour des animes — nouveautés, critiques et discussions.
+          </p>
+        </header>
+
+        {/* Grid posts */}
         {posts.length === 0 ? (
-          <p className="text-gray-400">Aucune actualité pour le moment.</p>
+          <p className="text-gray-400 text-center">Aucune actualité pour le moment.</p>
         ) : (
-          <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {posts.map((post) => (
-              <article key={post.idpost} className="bg-purple-950/60 p-5 rounded-lg shadow-md">
-                <header className="flex items-start justify-between gap-4">
-                  <div>
-                    <h2 className="text-xl font-semibold text-white">{post.titrepost}</h2>
-                    <p className="text-sm text-gray-400">
-                      Publié par{" "}
+              <article
+                key={post.idpost}
+                className="group bg-gradient-to-br from-purple-950/50 to-purple-950/30 border border-purple-800 rounded-lg p-5 shadow-sm hover:shadow-xl transform hover:-translate-y-1 transition"
+              >
+                {/* colored header strip */}
+                <div className="h-1 w-full rounded-sm mb-4 bg-gradient-to-r from-cyan-400 to-purple-400" />
+
+                <h2 className="text-xl font-semibold mb-2 group-hover:text-cyan-300">
+                  {post.titrepost}
+                </h2>
+
+                <div className="flex items-center justify-between gap-4 text-sm text-gray-400 mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-cyan-600 flex items-center justify-center font-semibold text-white">
+                      {post.utilisateur?.nomutilisateur?.charAt(0)?.toUpperCase() ?? "U"}
+                    </div>
+                    <div>
                       <Link href={`/profil/${post.utilisateur.iduser}`} className="text-cyan-300 hover:underline">
                         {post.utilisateur.nomutilisateur}
                       </Link>
-                      {post.datepost ? (
-                        <span className="ml-2 text-xs text-gray-500">
-                          • {new Date(post.datepost).toLocaleDateString()}
-                        </span>
-                      ) : null}
-                    </p>
+                      <div className="text-xs text-gray-400">
+                        {post.datepost ? new Date(post.datepost).toLocaleDateString() : ""}
+                      </div>
+                    </div>
                   </div>
-                </header>
 
-                <div className="mt-3 text-gray-100">
-                  <p className="whitespace-pre-line">{post.contenu}</p>
+                  <div className="text-xs text-gray-400">
+                    {post.contenu.length > 120 ? `${post.contenu.slice(0, 120)}…` : post.contenu}
+                  </div>
                 </div>
 
-                {/* Optionnel : lien vers page de post détaillée si ajoutée plus tard */}
-                {/* <div className="mt-4">
-                  <Link href={`/post/${post.idpost}`} className="text-cyan-300 hover:underline text-sm">
+                <p className="text-gray-200 mb-4 leading-relaxed">
+                  {post.contenu.length > 240 ? `${post.contenu.slice(0, 240)}…` : post.contenu}
+                </p>
+
+                <div className="flex items-center justify-between">
+                  <Link
+                    href={`/post/${post.idpost}`}
+                    className="text-sm inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-purple-800/60 hover:bg-purple-800 text-cyan-300 transition"
+                  >
                     Lire la suite
                   </Link>
-                </div> */}
+
+                  <div className="text-xs text-gray-400">
+                    ID #{post.idpost}
+                  </div>
+                </div>
               </article>
             ))}
           </div>
         )}
       </main>
+
       <Footer />
     </div>
   );
