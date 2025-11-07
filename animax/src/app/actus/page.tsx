@@ -12,7 +12,6 @@ export default async function ActusPage() {
   const posts = await prisma.post.findMany({
     orderBy: { datepost: "desc" },
     include: {
-      // Inclure également la relation file pour récupérer l'URL de la photo de profil
       utilisateur: { 
         select: { 
           iduser: true, 
@@ -21,7 +20,7 @@ export default async function ActusPage() {
         } 
       }
     },
-    take: 50 // charge les 50 derniers posts (ajuste si nécessaire)
+    take: 50 // charge les 50 derniers posts 
   });
 
   const buildFileUrl = (url?: string | null) => {
@@ -91,9 +90,6 @@ export default async function ActusPage() {
                     </div>
                   </div>
 
-                  <div className="text-xs text-gray-400">
-                    {post.contenu.length > 120 ? `${post.contenu.slice(0, 120)}…` : post.contenu}
-                  </div>
                 </div>
 
                 <p className="text-gray-200 mb-4 leading-relaxed">
@@ -109,7 +105,7 @@ export default async function ActusPage() {
                   </Link>
 
                   <div className="text-xs text-gray-400">
-                    ID #{post.idpost}
+                    Actualité n°{post.idpost}
                   </div>
                 </div>
               </article>
