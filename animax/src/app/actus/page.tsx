@@ -3,6 +3,7 @@ import NavBar from "@/app/components/NavBar";
 import Footer from "@/app/components/Footer";
 import Link from "next/link";
 import Image from "next/image";
+import ActusAdminPostForm from "./ActusAdminPostForm";
 
 const prisma = new PrismaClient();
 
@@ -41,6 +42,9 @@ export default async function ActusPage() {
             Les dernières actualités et articles autour des animes, nouveautés, critiques et discussions.
           </p>
         </header>
+
+        {/* Formulaire création post (visible côté client uniquement pour admins) */}
+        <ActusAdminPostForm />
 
         {/* Grid posts */}
         {posts.length === 0 ? (
