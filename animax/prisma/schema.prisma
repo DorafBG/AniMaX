@@ -102,7 +102,7 @@ model note {
 model post {
   idpost      Int           @id
   titrepost   String
-  contenu     String        @db.VarChar(50)
+  contenu     String        @db.VarChar(1000)
   datepost    DateTime?     @db.Date
   iduser      Int
   commentaire commentaire[]
