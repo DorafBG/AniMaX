@@ -17,8 +17,12 @@ export async function GET(req: Request, context: { params: Promise<{ id: string 
         file: { select: { url: true } },
         commentaire: {
           include: {
-            utilisateur: { select: { nomutilisateur: true } },
+            // On inclut maintenant l'id et le nom de l'utilisateur pour pouvoir lier vers /profil/[iduser]
+            utilisateur: { select: { iduser: true, nomutilisateur: true } },
           },
+          orderBy: {
+            datecommentaire: 'desc'
+          }
         },
         note: true,
       },

@@ -35,13 +35,8 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-cyan-300 transition-colors inline-block">
+                <a href="/actus" className="text-gray-300 hover:text-cyan-300 transition-colors inline-block">
                   Actus
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-cyan-300 transition-colors inline-block">
-                  Mon profil
                 </a>
               </li>
             </ul>
@@ -80,7 +75,7 @@ export default function Footer() {
             © {currentYear} AniMaX. Tous droits réservés.
           </p>
           <p className="flex items-center gap-2">
-            Fait avec par Quentin, Germain et Khanh-Lam
+            Fait par Quentin, Germain et Khanh-Lam
           </p>
         </div>
       </div>
