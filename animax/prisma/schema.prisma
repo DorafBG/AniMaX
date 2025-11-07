@@ -34,10 +34,10 @@ model commentaire {
   contenu         String?      @db.Text
   nblike          Int?
   datecommentaire DateTime?    @db.Timestamp
-  idanime         Int
+  idanime         Int?
   idpost          Int?
   iduser          Int
-  anime           anime        @relation(fields: [idanime], references: [idanime], onDelete: NoAction, onUpdate: NoAction)
+  anime           anime?       @relation(fields: [idanime], references: [idanime], onDelete: NoAction, onUpdate: NoAction)
   post            post?        @relation(fields: [idpost], references: [idpost], onDelete: NoAction, onUpdate: NoAction)
   utilisateur     utilisateur  @relation(fields: [iduser], references: [iduser], onDelete: NoAction, onUpdate: NoAction)
   like_           like_[]

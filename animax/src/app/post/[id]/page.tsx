@@ -8,11 +8,12 @@ import Link from "next/link";
 const prisma = new PrismaClient();
 
 export default async function PostPage({ params }: { params: { id: string } }) {
-  const id = Number(params.id);
-  if (isNaN(id)) return notFound();
+  const { id } = await params;
+  const idNumber = Number(id);
+  if (isNaN(idNumber)) return notFound();
 
   const post = await prisma.post.findUnique({
-    where: { idpost: id },
+    where: { idpost: idNumber },
     include: {
       utilisateur: { select: { iduser: true, nomutilisateur: true } },
       commentaire: {

@@ -9,17 +9,18 @@ type Comment = {
   contenu: string | null;
   nblike: number | null;
   utilisateur: {
-    nomutilisateur: string;
+    nomutilisateur: string | null;
   };
   note?: number | null;
 };
 
 type CommentsSectionProps = {
   comments: Comment[];
-  idanime: number;
+  idanime?: number;
+  idpost?: number;
 };
 
-export default function CommentsSection({ comments: initialComments, idanime }: CommentsSectionProps) {
+export default function CommentsSection({ comments: initialComments, idanime, idpost }: CommentsSectionProps) {
   const [user, setUser] = useState<{ iduser: number; isadministrateur: boolean } | null>(null);
   const [comments, setComments] = useState(initialComments);
   const [userLikes, setUserLikes] = useState<Set<number>>(new Set());
@@ -141,7 +142,8 @@ export default function CommentsSection({ comments: initialComments, idanime }: 
 
   return (
     <>
-      {user && <AddCommentForm idanime={idanime} onCommentAdded={handleCommentAdded} />}
+      {user && idanime && <AddCommentForm idanime={idanime} onCommentAdded={handleCommentAdded} />}
+      {user && idpost && <AddCommentForm idpost={idpost} onCommentAdded={handleCommentAdded} />}
       
       {comments.length === 0 ? (
         <p className="text-gray-400">Aucun commentaire.</p>
@@ -153,7 +155,7 @@ export default function CommentsSection({ comments: initialComments, idanime }: 
                 href={`/profil/${c.utilisateur.iduser}`}
                 className="font-semibold text-cyan-300 hover:underline"
               >
-                {c.utilisateur.nomutilisateur}
+                {c.utilisateur.nomutilisateur || "Utilisateur inconnu"}
               </Link>
               : {c.contenu}
             </p>

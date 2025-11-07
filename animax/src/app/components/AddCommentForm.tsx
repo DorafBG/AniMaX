@@ -3,11 +3,12 @@ import { useState } from "react";
 import { Send } from "lucide-react";
 
 type AddCommentFormProps = {
-  idanime: number;
+  idanime?: number;
+  idpost?: number;
   onCommentAdded: (comment: any) => void;
 };
 
-export default function AddCommentForm({ idanime, onCommentAdded }: AddCommentFormProps) {
+export default function AddCommentForm({ idanime, idpost, onCommentAdded }: AddCommentFormProps) {
   const [contenu, setContenu] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -24,10 +25,11 @@ export default function AddCommentForm({ idanime, onCommentAdded }: AddCommentFo
     setError("");
 
     try {
+      console.log("Envoi du commentaire avec:", { idanime, idpost, contenu }); // Debug
       const response = await fetch("/api/comments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idanime, contenu })
+        body: JSON.stringify({ idanime, idpost, contenu })
       });
 
       if (response.ok) {

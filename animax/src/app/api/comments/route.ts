@@ -17,11 +17,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { idanime, contenu } = body;
+    const { idanime, idpost, contenu } = body;
 
-    if (!idanime || !contenu || contenu.trim() === "") {
+    if ((!idanime && !idpost) || !contenu || contenu.trim() === "") {
       return NextResponse.json(
-        { error: "Contenu du commentaire requis" },
+        { error: "Contenu du commentaire et référence (anime ou post) requis" },
         { status: 400 }
       );
     }
@@ -38,7 +38,8 @@ export async function POST(request: NextRequest) {
     const comment = await prisma.commentaire.create({
       data: {
         idcommentaire: newId,
-        idanime: parseInt(idanime),
+        idanime: idanime ? parseInt(idanime) : (idpost ? 1 : parseInt(idanime)), // Valeur par défaut si c'est un post
+        idpost: idpost ? parseInt(idpost) : undefined,
         iduser: parseInt(userId),
         contenu: contenu.trim(),
         nblike: 0,
@@ -47,30 +48,34 @@ export async function POST(request: NextRequest) {
       include: {
         utilisateur: {
           select: {
-            nomutilisateur: true
+            nomutilisateur: true,
+            iduser: true
           }
         }
       }
     });
 
-    // Récupérer la note de l'utilisateur pour cet anime s'il en a une
-    const userNote = await prisma.note.findUnique({
-      where: {
-        iduser_idanime: {
-          iduser: parseInt(userId),
-          idanime: parseInt(idanime)
+    // Si c'est un commentaire sur un anime, récupérer la note de l'utilisateur
+    let commentWithNote: any = { ...comment, note: null };
+    
+    if (idanime) {
+      const userNote = await prisma.note.findUnique({
+        where: {
+          iduser_idanime: {
+            iduser: parseInt(userId),
+            idanime: parseInt(idanime)
+          }
+        },
+        select: {
+          note: true
         }
-      },
-      select: {
-        note: true
-      }
-    });
+      });
 
-    // Ajouter la note au commentaire s'il y en a une
-    const commentWithNote = {
-      ...comment,
-      note: userNote?.note ? parseFloat(userNote.note.toString()) : null
-    };
+      commentWithNote = {
+        ...comment,
+        note: userNote?.note ? parseFloat(userNote.note.toString()) : null
+      };
+    }
 
     return NextResponse.json({ comment: commentWithNote });
   } catch (error) {
