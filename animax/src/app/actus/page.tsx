@@ -25,8 +25,7 @@ export default async function ActusPage() {
 
   const buildFileUrl = (url?: string | null) => {
     if (!url) return null;
-    const clean = url.startsWith("/") ? url : `/${url.replace(/^\/+/, "")}`;
-    return `${process.env.NEXT_PUBLIC_BASE_URL}${clean}`;
+    return url.startsWith("/") ? url : `/${url.replace(/^\/+/, "")}`;
   };
 
   return (
