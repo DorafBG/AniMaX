@@ -61,9 +61,16 @@ export default function NavBar() {
             >
               {user.photoUrl && !imageError ? (
                 <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-cyan-400">
+                  {/* Normalize the stored photoUrl to avoid malformed absolute URLs */}
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_BASE_URL}${user.photoUrl}`}
-                    alt={user.nomutilisateur}
+                    src={
+                      user.photoUrl.startsWith("http")
+                        ? user.photoUrl
+                        : user.photoUrl.startsWith("/")
+                        ? user.photoUrl
+                        : `/${user.photoUrl.replace(/^\/+/, "")}`
+                    }
+                    alt={user.nomutilisateur || "user"}
                     fill
                     className="object-cover"
                     onError={() => setImageError(true)}

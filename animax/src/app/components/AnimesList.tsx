@@ -107,15 +107,25 @@ export default function AnimesList({ animes }: AnimesListProps) {
         </div>
       ) : (
         <section className="flex flex-wrap justify-center gap-6 px-6 py-4 max-w-screen-xl mx-auto">
-          {filteredAnimes.map((anime) => (
-            <AnimeCard
-              key={anime.idanime}
-              id={anime.idanime}
-              title={anime.contenu}
-              image={`${process.env.NEXT_PUBLIC_BASE_URL}/${anime.file.url}`}
-              rating={anime.notemoyenne}
-            />
-          ))}
+          {filteredAnimes.map((anime) => {
+            const imageSrc = anime.file?.url
+              ? (anime.file.url.startsWith("http")
+                  ? anime.file.url
+                  : anime.file.url.startsWith("/")
+                  ? anime.file.url
+                  : `/${anime.file.url.replace(/^\/+/, "")}`)
+              : "/placeholder.png";
+
+            return (
+              <AnimeCard
+                key={anime.idanime}
+                id={anime.idanime}
+                title={anime.contenu}
+                image={imageSrc}
+                rating={anime.notemoyenne}
+              />
+            );
+          })}
         </section>
       )}
     </div>

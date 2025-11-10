@@ -46,7 +46,15 @@ export default async function AnimePage({ params }: { params: { id: string } }) 
           <div className="md:w-1/2 flex flex-col items-center">
             <div className="relative w-[300px] h-[440px] rounded-lg overflow-hidden shadow-lg">
               <Image
-                src={`${process.env.NEXT_PUBLIC_BASE_URL}/${anime.file?.url}`}
+                src={
+                  anime.file?.url
+                    ? (anime.file.url.startsWith("http")
+                        ? anime.file.url
+                        : anime.file.url.startsWith("/")
+                        ? anime.file.url
+                        : `/${anime.file.url.replace(/^\/+/, "")}`)
+                    : "/placeholder.png"
+                }
                 alt={anime.contenu}
                 fill
                 className="object-cover"
