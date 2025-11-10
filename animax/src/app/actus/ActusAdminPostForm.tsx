@@ -48,7 +48,7 @@ export default function ActusAdminPostForm() {
         // reload to see new post
         window.location.reload();
       }
-    } catch (err) {
+    } catch {
       setError("Erreur réseau");
     } finally {
       setLoading(false);

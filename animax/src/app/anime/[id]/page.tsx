@@ -24,7 +24,7 @@ export default async function AnimePage({ params }: { params: { id: string } }) 
   const notes = anime.note || [];
   const distribution = Array.from({ length: 11 }, (_, i) => ({
     note: i,
-    count: notes.filter((n: any) => Math.round(n.note) === i).length,
+    count: notes.filter((n: { note: number }) => Math.round(n.note) === i).length,
   }));
 
   const date = anime.dateparution ? new Date(anime.dateparution).getFullYear() : "N/A";

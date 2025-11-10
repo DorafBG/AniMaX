@@ -3,7 +3,6 @@ import { PrismaClient } from "@prisma/client";
 import NavBar from "@/app/components/NavBar";
 import Footer from "@/app/components/Footer";
 import Image from "next/image";
-import ProfilePicUpload from "./ProfilePicUpload";
 import ProfilClientSection from "./ProfilClientSection";
 
 const prisma = new PrismaClient();
@@ -62,10 +61,10 @@ export default async function ProfilPage() {
   }
 
   // Transforme les Decimal en string pour les props client
-  function serializeUser(user: any) {
+  function serializeUser(user: typeof userResult) {
     return {
       ...user,
-      note: user.note.map((n: any) => ({
+      note: user.note.map((n) => ({
         ...n,
         note: n.note?.toString() ?? null,
       })),
@@ -73,31 +72,36 @@ export default async function ProfilPage() {
     };
   }
 
+  // Garder une référence du type original pour le typage
+  const userResult = user;
+
   // Créer un mapping des commentaires par anime
-  const commentairesByAnime = new Map();
-  user.commentaire.forEach((comment: any) => {
-    if (!commentairesByAnime.has(comment.idanime)) {
-      commentairesByAnime.set(comment.idanime, []);
+  const commentairesByAnime = new Map<number, typeof user.commentaire>();
+  user.commentaire.forEach((comment) => {
+    if (!commentairesByAnime.has(comment.idanime || 0)) {
+      commentairesByAnime.set(comment.idanime || 0, []);
     }
-    commentairesByAnime.get(comment.idanime).push(comment);
+    if (comment.idanime) {
+      commentairesByAnime.get(comment.idanime)!.push(comment);
+    }
   });
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-900 to-purple-1000 text-white flex flex-col">
       <NavBar />
       <div className="max-w-2xl mx-auto p-8">
-        <ProfilClientSection user={serializeUser(user)} />
+        <ProfilClientSection user={serializeUser(userResult)} />
         <div>
           <h2 className="text-xl font-semibold mb-4">Mes notes et commentaires</h2>
-          {user.note.length === 0 ? (
-            <p className="text-gray-400">Aucune note pour l'instant.</p>
+          {userResult.note.length === 0 ? (
+            <p className="text-gray-400">Aucune note pour l&apos;instant.</p>
           ) : (
             <ul className="space-y-4">
-              {user.note.map((n: any, idx: number) => {
+              {userResult.note.map((n, idx: number) => {
                 const animeComments = commentairesByAnime.get(n.idanime) || [];
                 return (
                   <li
-                    key={`${n.idnote}-${n.anime?.contenu ?? idx}`}
+                    key={`${n.iduser}-${n.idanime}-${idx}`}
                     className="bg-purple-950 p-4 rounded-md"
                   >
                     <div className="flex items-center gap-4 mb-2">
@@ -122,11 +126,11 @@ export default async function ProfilPage() {
                         <p className="text-sm text-gray-400 mb-2">
                           {animeComments.length === 1 ? "Mon commentaire :" : "Mes commentaires :"}
                         </p>
-                        {animeComments.map((comment: any) => (
+                        {animeComments.map((comment) => (
                           <div key={comment.idcommentaire} className="bg-purple-800/40 p-3 rounded-md mb-2">
                             <p className="text-sm text-gray-200">{comment.contenu}</p>
                             <p className="text-xs text-gray-500 mt-1">
-                              {new Date(comment.datecommentaire).toLocaleDateString('fr-FR', {
+                              {comment.datecommentaire && new Date(comment.datecommentaire).toLocaleDateString('fr-FR', {
                                 day: '2-digit',
                                 month: '2-digit',
                                 year: 'numeric',

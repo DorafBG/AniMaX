@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Si c'est un commentaire sur un anime, récupérer la note de l'utilisateur
-    let commentWithNote: any = { ...comment, note: null };
+    let commentWithNote: typeof comment & { note: number | null } = { ...comment, note: null };
     
     if (idanime) {
       const userNote = await prisma.note.findUnique({

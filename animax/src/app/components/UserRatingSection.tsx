@@ -5,7 +5,7 @@ import { Star } from "lucide-react";
 type UserRatingSectionProps = {
   animeId: number;
   noteMoyenne: number | null;
-  notes: any[];
+  notes: { iduser: number; note: string | number }[];
   onRatingUpdate?: (newRating: number, newAverage: number) => void;
 };
 
@@ -29,8 +29,8 @@ export default function UserRatingSection({ animeId, noteMoyenne, notes, onRatin
         if (data.user) {
           setUser(data.user);
           // Trouver la note de l'utilisateur pour cet anime
-          const userNote = notes.find((n: any) => n.iduser === data.user.iduser);
-          setUserRating(userNote ? parseFloat(userNote.note) : null);
+          const userNote = notes.find(n => n.iduser === data.user.iduser);
+          setUserRating(userNote ? Number(userNote.note) : null);
         }
       })
       .catch(() => setUser(null));

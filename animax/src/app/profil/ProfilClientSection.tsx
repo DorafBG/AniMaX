@@ -4,8 +4,17 @@ import ProfilePicUpload from "./ProfilePicUpload";
 import { useState } from "react";
 import { Pencil } from "lucide-react";
 
-export default function ProfilClientSection({ user }: { user: any }) {
-  const [photoUrl, setPhotoUrl] = useState(user.file?.url);
+type User = {
+  nomutilisateur: string | null;
+  adressemail: string | null;
+  file?: {
+    url: string;
+  } | null;
+  note: unknown[];
+};
+
+export default function ProfilClientSection({ user }: { user: User }) {
+  const [photoUrl] = useState(user.file?.url);
   const [hover, setHover] = useState(false);
 
   return (

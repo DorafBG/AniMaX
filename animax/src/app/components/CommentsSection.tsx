@@ -1,6 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
-import { Heart, Trash2 } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Heart } from "lucide-react";
 import AddCommentForm from "./AddCommentForm";
 import Link from "next/link";
 
@@ -9,6 +9,7 @@ type Comment = {
   contenu: string | null;
   nblike: number | null;
   utilisateur: {
+    iduser: number;
     nomutilisateur: string | null;
   };
   note?: number | null;
@@ -25,22 +26,8 @@ export default function CommentsSection({ comments: initialComments, idanime, id
   const [comments, setComments] = useState(initialComments);
   const [userLikes, setUserLikes] = useState<Set<number>>(new Set());
   const [loadingLikes, setLoadingLikes] = useState<Set<number>>(new Set());
-  const [deletingComments, setDeletingComments] = useState<Set<number>>(new Set());
 
-  useEffect(() => {
-    // Récupérer l'utilisateur connecté (si co)
-    fetch("/api/auth/me")
-      .then(res => res.json())
-      .then(data => {
-        if (data.user) {
-          setUser(data.user);
-          fetchUserLikes(data.user.iduser);
-        }
-      })
-      .catch(() => setUser(null));
-  }, []);
-
-  const fetchUserLikes = async (userId: number) => {
+  const fetchUserLikes = useCallback(async () => {
     try {
       const commentIds = comments.map(c => c.idcommentaire);
       const response = await fetch("/api/comments/user-likes", {
@@ -56,7 +43,19 @@ export default function CommentsSection({ comments: initialComments, idanime, id
     } catch (error) {
       console.error("Erreur récupération likes:", error);
     }
-  };
+  }, [comments]);
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then(res => res.json())
+      .then(data => {
+        if (data.user) {
+          setUser(data.user);
+          fetchUserLikes();
+        }
+      })
+      .catch(() => setUser(null));
+  }, [fetchUserLikes]);
 
   const handleLike = async (idcommentaire: number) => {
     if (!user || loadingLikes.has(idcommentaire)) return;
@@ -111,35 +110,6 @@ export default function CommentsSection({ comments: initialComments, idanime, id
     setComments(prev => [newComment, ...prev]);
   };
 
-  const handleDelete = async (idcommentaire: number) => {
-    if (!user?.isadministrateur || deletingComments.has(idcommentaire)) return;
-
-    if (!confirm("Êtes-vous sûr de vouloir supprimer ce commentaire ?")) return;
-
-    setDeletingComments(prev => new Set(prev).add(idcommentaire));
-
-    try {
-      const response = await fetch(`/api/comments/${idcommentaire}`, {
-        method: "DELETE"
-      });
-
-      if (response.ok) {
-        setComments(prev => prev.filter(c => c.idcommentaire !== idcommentaire));
-      } else {
-        alert("Erreur lors de la suppression du commentaire");
-      }
-    } catch (error) {
-      console.error("Erreur suppression:", error);
-      alert("Erreur de connexion");
-    } finally {
-      setDeletingComments(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(idcommentaire);
-        return newSet;
-      });
-    }
-  };
-
   return (
     <>
       {user && idanime && <AddCommentForm idanime={idanime} onCommentAdded={handleCommentAdded} />}
@@ -148,7 +118,7 @@ export default function CommentsSection({ comments: initialComments, idanime, id
       {comments.length === 0 ? (
         <p className="text-gray-400">Aucun commentaire.</p>
       ) : (
-        comments.map((c: any) => (
+        comments.map((c) => (
           <div key={c.idcommentaire} className="bg-purple-800/40 rounded-md p-3">
             <p className="text-sm">
               <Link

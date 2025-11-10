@@ -1,5 +1,6 @@
 "use client";
-import { Github, Mail, Heart } from "lucide-react";
+import { Github, Mail } from "lucide-react";
+import Link from "next/link";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -25,19 +26,19 @@ export default function Footer() {
             <h3 className="text-base font-semibold mb-2 text-cyan-400">Navigation</h3>
             <ul className="space-y-1.5 text-sm">
               <li>
-                <a href="/" className="text-gray-300 hover:text-cyan-300 transition-colors inline-block">
+                <Link href="/" className="text-gray-300 hover:text-cyan-300 transition-colors inline-block">
                   Accueil
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/" className="text-gray-300 hover:text-cyan-300 transition-colors inline-block">
+                <Link href="/" className="text-gray-300 hover:text-cyan-300 transition-colors inline-block">
                   Animes
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/actus" className="text-gray-300 hover:text-cyan-300 transition-colors inline-block">
+                <Link href="/actus" className="text-gray-300 hover:text-cyan-300 transition-colors inline-block">
                   Actus
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

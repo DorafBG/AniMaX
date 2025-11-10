@@ -2,10 +2,21 @@
 import { useState } from "react";
 import { Send } from "lucide-react";
 
+type Comment = {
+  idcommentaire: number;
+  contenu: string | null;
+  nblike: number | null;
+  utilisateur: {
+    nomutilisateur: string | null;
+    iduser: number;
+  };
+  note?: number | null;
+};
+
 type AddCommentFormProps = {
   idanime?: number;
   idpost?: number;
-  onCommentAdded: (comment: any) => void;
+  onCommentAdded: (comment: Comment) => void;
 };
 
 export default function AddCommentForm({ idanime, idpost, onCommentAdded }: AddCommentFormProps) {
@@ -40,7 +51,7 @@ export default function AddCommentForm({ idanime, idpost, onCommentAdded }: AddC
         const errorData = await response.json();
         setError(errorData.error || "Erreur lors de l'ajout du commentaire");
       }
-    } catch (error) {
+    } catch {
       setError("Erreur de connexion");
     } finally {
       setIsSubmitting(false);
