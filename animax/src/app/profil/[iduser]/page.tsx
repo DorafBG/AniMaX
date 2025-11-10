@@ -8,7 +8,8 @@ const prisma = new PrismaClient();
 
 export default async function ProfilPublicPage({ params }: { params: { iduser: string } }) {
   // Récupère l'id depuis l'URL
-  const iduser = Number(params.iduser);
+  const { iduser: iduserParam } = await params;
+  const iduser = Number(iduserParam);
   if (isNaN(iduser)) {
     return (
       <div>
@@ -51,12 +52,14 @@ export default async function ProfilPublicPage({ params }: { params: { iduser: s
   if (!user) return notFound();
 
   // Créer un mapping des commentaires par anime
-  const commentairesByAnime = new Map();
-  user.commentaire.forEach((comment: any) => {
-    if (!commentairesByAnime.has(comment.idanime)) {
+  const commentairesByAnime = new Map<number, typeof user.commentaire>();
+  user.commentaire.forEach((comment) => {
+    if (comment.idanime && !commentairesByAnime.has(comment.idanime)) {
       commentairesByAnime.set(comment.idanime, []);
     }
-    commentairesByAnime.get(comment.idanime).push(comment);
+    if (comment.idanime) {
+      commentairesByAnime.get(comment.idanime)!.push(comment);
+    }
   });
 
   return (
@@ -86,11 +89,11 @@ export default async function ProfilPublicPage({ params }: { params: { iduser: s
         <div>
           <h2 className="text-xl font-semibold mb-4">Ses notes et commentaires</h2>
           {user.note.length === 0 ? (
-            <p className="text-gray-400">Aucune note pour l'instant.</p>
+            <p className="text-gray-400">Aucune note pour l&apos;instant.</p>
           ) : (
             <ul className="space-y-4">
-              {user.note.map((n: any, idx: number) => {
-                const animeComments = commentairesByAnime.get(n.anime?.idanime) || [];
+              {user.note.map((n, idx: number) => {
+                const animeComments = commentairesByAnime.get(n.anime?.idanime || 0) || [];
                 return (
                   <li
                     key={`${n.iduser}-${n.idanime}-${idx}`}
@@ -116,11 +119,11 @@ export default async function ProfilPublicPage({ params }: { params: { iduser: s
                         <p className="text-sm text-gray-400 mb-2">
                           {animeComments.length === 1 ? "Son commentaire :" : "Ses commentaires :"}
                         </p>
-                        {animeComments.map((comment: any) => (
+                        {animeComments.map((comment) => (
                           <div key={comment.idcommentaire} className="bg-purple-800/40 p-3 rounded-md mb-2">
                             <p className="text-sm text-gray-200">{comment.contenu}</p>
                             <p className="text-xs text-gray-500 mt-1">
-                              {new Date(comment.datecommentaire).toLocaleDateString('fr-FR', {
+                              {comment.datecommentaire && new Date(comment.datecommentaire).toLocaleDateString('fr-FR', {
                                 day: '2-digit',
                                 month: '2-digit',
                                 year: 'numeric',
