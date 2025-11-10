@@ -8,13 +8,14 @@ type User = {
   nomutilisateur: string | null;
   adressemail: string | null;
   file?: {
-    url: string;
+    idfile: number;
+    url: string | null;
   } | null;
   note: unknown[];
 };
 
 export default function ProfilClientSection({ user }: { user: User }) {
-  const [photoUrl] = useState(user.file?.url);
+  const [photoUrl] = useState(user.file?.url || null);
   const [hover, setHover] = useState(false);
 
   return (
