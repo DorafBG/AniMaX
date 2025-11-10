@@ -23,7 +23,8 @@ export default function AnimesList({ animes }: AnimesListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [activeFilters, setActiveFilters] = useState<FilterCriteria>({
-    genres: []
+    genres: [],
+    sortBy: 'none'
   });
 
   const handleSearch = (term: string) => {
@@ -65,6 +66,13 @@ export default function AnimesList({ animes }: AnimesListProps) {
       );
     }
 
+    // Tri par note moyenne
+    if (activeFilters.sortBy === 'rating-asc') {
+      filtered = filtered.sort((a, b) => (a.notemoyenne || 0) - (b.notemoyenne || 0));
+    } else if (activeFilters.sortBy === 'rating-desc') {
+      filtered = filtered.sort((a, b) => (b.notemoyenne || 0) - (a.notemoyenne || 0));
+    }
+
     return filtered;
   }, [animes, searchTerm, activeFilters]); // si l'un de ces 3 change, on recalcule
 
@@ -79,16 +87,21 @@ export default function AnimesList({ animes }: AnimesListProps) {
         availableGenres={availableGenres}
       />
       
-      {(searchTerm || activeFilters.genres.length > 0) && (
+      {(searchTerm || activeFilters.genres.length > 0 || activeFilters.sortBy !== 'none') && (
         <div className="text-center text-white/70 mb-4">
           {filteredAnimes.length} résultat(s) trouvé(s)
           {searchTerm && ` pour "${searchTerm}"`}
+          {activeFilters.sortBy !== 'none' && (
+            <span className="block text-sm text-cyan-300">
+              Triés par note {activeFilters.sortBy === 'rating-asc' ? 'croissante' : 'décroissante'}
+            </span>
+          )}
         </div>
       )}
 
       {filteredAnimes.length === 0 ? (
         <div className="text-center text-white/70 mt-8">
-          {searchTerm || activeFilters.genres.length > 0
+          {searchTerm || activeFilters.genres.length > 0 || activeFilters.sortBy !== 'none'
             ? "Aucun anime trouvé avec ces critères." 
             : "Aucun anime disponible."}
         </div>
