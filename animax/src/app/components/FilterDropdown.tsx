@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 
 export type FilterCriteria = {
   genres: string[];
+  sortBy: 'none' | 'rating-asc' | 'rating-desc';
 };
 
 type FilterDropdownProps = {
@@ -20,6 +21,7 @@ export default function FilterDropdown({
   availableGenres
 }: FilterDropdownProps) {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<'none' | 'rating-asc' | 'rating-desc'>('none');
 
   const handleGenreToggle = (genre: string) => {
     setSelectedGenres(prev => 
@@ -31,15 +33,18 @@ export default function FilterDropdown({
 
   const handleApplyFilters = () => {
     onApplyFilters({
-      genres: selectedGenres
+      genres: selectedGenres,
+      sortBy: sortBy
     });
     onClose();
   };
 
   const handleResetFilters = () => {
     setSelectedGenres([]);
+    setSortBy('none');
     onApplyFilters({
-      genres: []
+      genres: [],
+      sortBy: 'none'
     });
   };
 
@@ -83,6 +88,20 @@ export default function FilterDropdown({
                 </label>
               ))}
             </div>
+          </div>
+
+          {/* Tri par popularité */}
+          <div className="mb-4">
+            <label className="block text-white font-medium mb-2">Popularité</label>
+            <select 
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as 'none' | 'rating-asc' | 'rating-desc')}
+              className="w-full bg-purple-700 text-white border border-purple-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            >
+              <option value="none">Aucun tri</option>
+              <option value="rating-asc">Note croissante</option>
+              <option value="rating-desc">Note décroissante</option>
+            </select>
           </div>
 
           {/* Boutons */}
