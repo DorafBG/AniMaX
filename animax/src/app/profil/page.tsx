@@ -76,12 +76,14 @@ export default async function ProfilPage() {
   const userResult = user;
 
   // Créer un mapping des commentaires par anime
+  // Filtrer pour ne garder que les commentaires sur les animes (pas sur les posts)
   const commentairesByAnime = new Map<number, typeof user.commentaire>();
   user.commentaire.forEach((comment) => {
-    if (!commentairesByAnime.has(comment.idanime || 0)) {
-      commentairesByAnime.set(comment.idanime || 0, []);
-    }
-    if (comment.idanime) {
+    // Ne traiter que les commentaires qui sont vraiment sur des animes (idpost doit être null/undefined)
+    if ((comment.idpost === null || comment.idpost === undefined) && comment.idanime) {
+      if (!commentairesByAnime.has(comment.idanime)) {
+        commentairesByAnime.set(comment.idanime, []);
+      }
       commentairesByAnime.get(comment.idanime)!.push(comment);
     }
   });
